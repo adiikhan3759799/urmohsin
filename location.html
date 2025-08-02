@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Share Your Location</title>
+</head>
+<body>
+  <h2>Click below to share your location</h2>
+  <button onclick="getLocation()">Share My Location</button>
+  <p id="status"></p>
+
+  <script>
+    function getLocation() {
+      const status = document.getElementById("status");
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          status.innerHTML = `Location: ${lat}, ${lon}<br>Sending to Google Form...`;
+
+          const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf39ggKsUKU0fmcqK8LlvBnNstR7KDyNA30S02n9y_P-YVp_Q/formResponse";
+
+          const data = new FormData();
+          data.append("entry.1518485043", lat); // Latitude
+          data.append("entry.1282697821", lon); // Longitude
+
+          fetch(formUrl, {
+            method: "POST",
+            mode: "no-cors",
+            body: data
+          }).then(() => {
+            status.innerHTML += "<br>Location sent successfully!";
+          }).catch(() => {
+            status.innerHTML += "<br>Error sending location.";
+          });
+
+        }, function () {
+          status.innerHTML = "Location permission denied.";
+        });
+      } else {
+        status.innerHTML = "Geolocation is not supported by this browser.";
+      }
+    }
+  </script>
+</body>
+</html>
